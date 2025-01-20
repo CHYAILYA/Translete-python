@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translation WebSocket Client</title>
+    <script>
+        const socket = new WebSocket('ws://localhost:8080'); // Connect to WebSocket server
+
+        socket.onopen = () => {
+            console.log("Connected to the server");
+        };
+
+        socket.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+            if (message.translation) {
+                console.log("Received Translation: ", message.translation);
+                document.getElementById('translations').innerHTML += `<p>${message.translation}</p>`;
+            }
+        };
+
+        function joinRoom(roomId) {
+            const message = {
+                action: 'join_room',
+                room_id: roomId
+            };
+            socket.send(JSON.stringify(message));
+        }
+
+        function sendTranslation(roomId, translation) {
+            const message = {
+                action: 'send_translation',
+                room_id: roomId,
+                translation: translation
+            };
+            socket.send(JSON.stringify(message));
+        }
+
+        // Example usage
+        joinRoom('1234');
+        sendTranslation('1234', 'Hello, how are you?');
+    </script>
+</head>
+<body>
+    <h1>Translation WebSocket Client</h1>
+    <div id="translations"></div>
+</body>
+</html>
