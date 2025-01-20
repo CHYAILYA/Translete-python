@@ -6,7 +6,7 @@ const app = express();
 const server = http.createServer(app);
 
 // Serve static files (including index.html) from the "public" folder
-app.use(express.static('public'));  // Make sure the 'public' folder exists
+app.use(express.static('public')); // Make sure the 'public' folder exists
 
 // Create WebSocket server
 const wss = new WebSocket.Server({ server });
@@ -20,7 +20,7 @@ wss.on('connection', (ws) => {
 
     // Assign the client to a room when joining
     let currentRoom = null;
-    let userName = null;  // Store the client's user name
+    let userName = null; // Store the client's user name
 
     // Handle messages from client
     ws.on('message', (message) => {
@@ -29,7 +29,7 @@ wss.on('connection', (ws) => {
 
         if (parsedMessage.action === 'join_room') {
             const roomId = parsedMessage.room_id;
-            userName = parsedMessage.user_name;  // Set the user name when they join
+            userName = parsedMessage.user_name; // Set the user name when they join
 
             currentRoom = roomId;
 
@@ -52,7 +52,7 @@ wss.on('connection', (ws) => {
             // Send translation to all clients in the same room
             rooms[currentRoom].forEach((client) => {
                 if (client !== ws && client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify({ translation, userName: userName }));
+                    client.send(JSON.stringify({ translation, userName }));
                 }
             });
         }
@@ -63,14 +63,19 @@ wss.on('connection', (ws) => {
         if (currentRoom && rooms[currentRoom]) {
             rooms[currentRoom].delete(ws);
             if (rooms[currentRoom].size === 0) {
-                delete rooms[currentRoom];  // Remove the room if it has no clients
+                delete rooms[currentRoom]; // Remove the room if it has no clients
             }
         }
         console.log("A client has disconnected");
     });
 });
 
-// Start the server on port 8080
-server.listen(8080, () => {
-    console.log("Server is running at http://localhost:8080");
+// Get port from environment variables or default to 8080
+const PORT = process.env.PORT || 8080;
+
+// Start the server
+server.listen(PORT, () => {
+    const host = server.address().address || 'localhost';
+    const port = server.address().port;
+    console.log(`Server is running at http://${host}:${port}`);
 });
