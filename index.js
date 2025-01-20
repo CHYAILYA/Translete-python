@@ -70,7 +70,10 @@ wss.on('connection', (ws) => {
     });
 });
 
-// Start the server on port 8080
-server.listen(8080, () => {
+// Gunakan process.env.PORT atau fallback ke 8080
+const PORT = process.env.PORT || 8080;
+
+server.listen(PORT, () => {
     console.log(`Server is running at ws://${server.address().address}:${PORT}`);
 });
+
