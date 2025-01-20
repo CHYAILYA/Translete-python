@@ -74,8 +74,6 @@ wss.on('connection', (ws) => {
 const PORT = process.env.PORT || 8080;
 
 // Start the server
-server.listen(PORT, () => {
-    const host = server.address().address || 'localhost';
-    const port = server.address().port;
-    console.log(`Server is running at http://${host}:${port}`);
+server.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server is running at http://localhost:${PORT}`);
 });
